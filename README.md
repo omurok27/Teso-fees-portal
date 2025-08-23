@@ -155,7 +155,15 @@
                                 </tr>
                             </thead>
                             <tbody id="studentsTableBody" class="bg-white divide-y divide-gray-200">
-                                <!-- Students will be populated here -->
+                                <tr>
+                                    <td colspan="7" class="px-4 py-8 text-center text-gray-500">
+                                        <svg class="w-12 h-12 mx-auto mb-4 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197m13.5-9a2.5 2.5 0 11-5 0 2.5 2.5 0 015 0z"></path>
+                                        </svg>
+                                        <p>No student data loaded</p>
+                                        <p class="text-sm mt-1">Upload a CSV file or load sample data to get started</p>
+                                    </td>
+                                </tr>
                             </tbody>
                         </table>
                     </div>
@@ -328,27 +336,8 @@
     </div>
 
     <script>
-        // Sample student data
-        let studentsData = {
-            'TESO001': {
-                name: 'John Mukasa',
-                class: 'Senior 6 - Science',
-                totalFees: 2500000,
-                amountPaid: 1800000
-            },
-            'TESO002': {
-                name: 'Sarah Nakato',
-                class: 'Senior 5 - Arts',
-                totalFees: 2200000,
-                amountPaid: 2200000
-            },
-            'TESO003': {
-                name: 'David Okello',
-                class: 'Senior 4',
-                totalFees: 2000000,
-                amountPaid: 1500000
-            }
-        };
+        // Student data - starts empty, populate via CSV upload or sample data
+        let studentsData = {};
 
         let currentStudent = null;
         let currentView = 'student';
@@ -405,7 +394,24 @@
             const filter = document.getElementById('filterStatus').value;
             tbody.innerHTML = '';
 
-            Object.keys(studentsData).forEach(id => {
+            const students = Object.keys(studentsData);
+            
+            if (students.length === 0) {
+                tbody.innerHTML = `
+                    <tr>
+                        <td colspan="7" class="px-4 py-8 text-center text-gray-500">
+                            <svg class="w-12 h-12 mx-auto mb-4 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197m13.5-9a2.5 2.5 0 11-5 0 2.5 2.5 0 015 0z"></path>
+                            </svg>
+                            <p>No student data loaded</p>
+                            <p class="text-sm mt-1">Upload a CSV file or load sample data to get started</p>
+                        </td>
+                    </tr>
+                `;
+                return;
+            }
+
+            students.forEach(id => {
                 const student = studentsData[id];
                 const outstanding = student.totalFees - student.amountPaid;
                 const isCleared = outstanding === 0;
@@ -521,6 +527,11 @@
         }
 
         function exportData() {
+            if (Object.keys(studentsData).length === 0) {
+                alert('No data to export. Please load student data first.');
+                return;
+            }
+
             let csvContent = 'StudentID,Name,Class,TotalFees,AmountPaid\n';
             
             Object.keys(studentsData).forEach(id => {
@@ -547,7 +558,7 @@
 
             const student = studentsData[studentId];
             if (!student) {
-                alert('Invalid Student ID. Please check your Student ID.');
+                alert('Invalid Student ID. Please check your Student ID or contact the admin to load student data.');
                 return;
             }
 
@@ -782,7 +793,9 @@
             // Clear form
             document.getElementById('studentId').value = '';
         }
-    </script>
-<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'973cae8f7748c836',t:'MTc1NTk3MzgzNC4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
-</html>
 
+        // Initialize the portal
+        showStudentPortal();
+    </script>
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'973cd12e5043c84d',t:'MTc1NTk3NTI1Mi4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+</html>
